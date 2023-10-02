@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: sword3
   description: 
   icon: {fileID: 21300000, guid: b97c91e8b348f3f4ebdc11f5c82182cd, type: 3}
-  itemType: 1
+  itemType: 0
   pickup: {fileID: 9019309367737201965, guid: 82b9ad00a2102224cb191a7052c4901e, type: 3}
   weaponType: 0
   weaponDamage: 0

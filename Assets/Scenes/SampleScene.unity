@@ -10738,11 +10738,9 @@ MonoBehaviour:
   xMoveAmount: 200
   yMoveAmount: 220
   moveTime: 2000
-  slideObject: {fileID: 362692291}
-  itemsParent: {fileID: 1528260443}
-  usePanel: {fileID: 2118569178}
   rowCount: 4
-  colCount: 3
+  colCount: 0
+  colModde: 0
   inventoryUIParent: {fileID: 0}
   inventoryMoveAmount: 1050
   tweenDuration: 1
@@ -11172,6 +11170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f7934bbda3ec2488c0a1faff464e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  a: 0
+  b: 0
+  intResult: 0
+  ab: 0
+  bb: 0
+  floatResult: 0
 --- !u!4 &1991594822
 Transform:
   m_ObjectHideFlags: 0
@@ -11727,11 +11731,9 @@ MonoBehaviour:
   xMoveAmount: 200
   yMoveAmount: 220
   moveTime: 2000
-  slideObject: {fileID: 1447708674}
-  itemsParent: {fileID: 86280755}
-  usePanel: {fileID: 1446594276}
   rowCount: 4
-  colCount: 3
+  colCount: 0
+  colModde: 0
   inventoryUIParent: {fileID: 184938039}
   inventoryMoveAmount: 1050
   tweenDuration: 0.5

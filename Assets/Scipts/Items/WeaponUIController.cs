@@ -24,6 +24,12 @@ public class WeaponUIController : MonoBehaviour
 
     private MeleeCombatUI chosenItem;
 
+    
+    private TempInventory inventory;
+    private void Awake()
+    {
+        inventory = TempInventory.GetPlayerInventory();
+    }
     private void Start()
     {
         itemParent = slideObject.GetChild(0);
@@ -106,6 +112,7 @@ public class WeaponUIController : MonoBehaviour
     {
         uiNumber = Mathf.Abs(Mathf.RoundToInt(value / moveAmount));
         return itemParent.GetChild(uiNumber).GetComponent<MeleeCombatUI>();
+        //return inventory.GetItemInSlot(uiNumber,SlotType.Weapon);
     }
 
     public bool CheckIsReadyToClose()

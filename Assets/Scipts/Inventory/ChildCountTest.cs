@@ -5,36 +5,30 @@ using UnityEngine;
 public class ChildCountTest : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    public int a;
+    public int b;
+
+    public int intResult;
+
+
+    [Header("Float")]
+
+    public float ab;
+    public float bb;
+    public float floatResult;
+
+    public int floatboluint;
+    public float floatboluintFloat;
+
+
+    private void Update()
     {
-        print(transform.childCount);
-    }
+        intResult = a / b;
 
-    // Update is called once per frame
-    void Update()
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            print("child " + i +" name");
-        }
+        floatResult= ab / bb;
 
-        List<int> list = new List<int>();
-        list.Add(0);
-        list.Add(1);
-        list.Add(2);
-        list.Add(3);
-        list.Add(4);
+       // floatboluint = ab / b;
+        floatboluintFloat = a / bb;
 
-        print("Capacity" + list.Capacity + " Count " + list.Count);
-
-        list.Remove(0);
-        print("After Remove");
-        print("Capacity" + list.Capacity + " Count " + list.Count);
-
-
-        //for (int i = 0; i < list.Capacity; i++)
-        //{
-        //    print(list[i]);
-        //}
     }
 }

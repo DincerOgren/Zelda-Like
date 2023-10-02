@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: def
   description: 
   icon: {fileID: 0}
-  itemType: 1
+  itemType: 0
   pickup: {fileID: 0}
   weaponType: 0
   weaponDamage: 0

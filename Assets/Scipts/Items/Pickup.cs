@@ -16,8 +16,8 @@ public class Pickup : MonoBehaviour
 
     private void Awake()
     {
-        var player = GameObject.FindGameObjectWithTag("Player");
-        inventory = player.GetComponent<TempInventory>();
+
+        inventory = TempInventory.GetPlayerInventory(); ;
     }
 
     // PUBLIC
@@ -45,9 +45,10 @@ public class Pickup : MonoBehaviour
 
     public void PickupItem()
     {
-        bool foundSlot = inventory.AddToFirstEmptySlot(item, number);
+        bool foundSlot = inventory.AddToFirstEmptySlot(item, number,item.GetItemType());
         if (foundSlot)
         {
+            print("Added to slot " + item.GetItemType());
             Destroy(gameObject);
         }
     }

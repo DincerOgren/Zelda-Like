@@ -14,10 +14,10 @@ public class InventoryUIController : MonoBehaviour
     public float yMoveAmount = 220f;
 
     public float moveTime = 5f;
-    public Transform slideObject;
-    public Transform itemsParent;
+    private Transform slideObject;
+    private Transform itemsParent;
 
-    public InventoryUsePanelControl usePanel;
+    private InventoryUsePanelControl usePanel;
 
     private bool shouldMoveHorizontally = false;
     private bool shouldMoveVertically = false;
@@ -26,9 +26,11 @@ public class InventoryUIController : MonoBehaviour
 
     
 
-    public int rowCount=4;
-    public int colCount;
-    private int colModde;
+    public float rowCount=4;
+    public float colCount;
+    public float colModde;
+
+
     //---------
     [Header("UI Changer")]
     public Transform inventoryUIParent;
@@ -56,10 +58,12 @@ public class InventoryUIController : MonoBehaviour
     private static readonly float fixedYSumAmount = -165f;
 
     private Vector3 curPos;
-    [Header("dnenm")]
+    private Vector3 startPos;
+    [Header("Current Items")]
     public InventoryUISlot currentSlot = null;
     public int uiNumber;
-    private int currentCol = 1;
+    public float currentCol = 1;
+    public float currentRow = 1;
 
     private TempInventory inventory;
 
@@ -70,23 +74,21 @@ public class InventoryUIController : MonoBehaviour
         
         inventory = TempInventory.GetPlayerInventory();
         panelCount = inventoryUIParent.childCount-1;
-        colCount = Mathf.CeilToInt(inventory.GetSize()/rowCount);
-        colModde = inventory.GetSize() % rowCount;
         //itemCount = itemsParent.childCount;
         //itemList = new InventoryUISlot[Mathf.RoundToInt(itemCount)];
         //FillList(itemList);
-        
+
         //usePanel.dropEvent += FillListAction;
-        
+        SetTransforms(currentPanelCount);
+        startPos = slideObject.localPosition;
+        //colCount = Mathf.CeilToInt(inventory.GetEverySize(panelComponents[currentPanelCount].type) / rowCount);
+
     }
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Alpha3) && canSwipeUI)
         {
-            
-
             GoLeft();
-            
         }
         if (Input.GetKeyDown(KeyCode.Alpha1) && canSwipeUI)
         {
@@ -113,14 +115,25 @@ public class InventoryUIController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.D))
             {
+                if (colModde > 0 && currentCol == colCount && currentRow>=colModde)
+                {
+                    return;
+                }
                 if (currentSlot != null)
                     currentSlot.DeActivate();
-                targetPos.x = Mathf.Min(targetPos.x + xMoveAmount, (((rowCount - 1) * xMoveAmount) - fixedXSumAmount));
+                currentRow = Mathf.Min(currentRow + 1, rowCount);
+                
+                //Cant allowed to cycle through non exsisted items
+                targetPos.x = Mathf.Min(targetPos.x + xMoveAmount, ((rowCount - 1) * xMoveAmount) - fixedXSumAmount);
+
+
                 shouldMoveHorizontally = true;
             }
 
             if (Input.GetKeyDown(KeyCode.A))
             {
+                currentRow = Mathf.Max(currentRow - 1, 1);
+
                 if (currentSlot != null)
                     currentSlot.DeActivate();
                 targetPos.x = MathF.Max(targetPos.x - xMoveAmount, 0 - fixedXSumAmount);
@@ -129,9 +142,20 @@ public class InventoryUIController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.S) )
             {
+                if (colModde > 0)
+                {
+                    if (currentRow > colModde && currentCol==colCount-1)
+                    {
+                        return;
+                    }
+                }
+
                 currentCol = Mathf.Min(currentCol + 1, colCount);
                 if (currentSlot != null)
                     currentSlot.DeActivate();
+
+                //Cant allowed to cycle through non exsisted items
+
                 targetPos.y = MathF.Max(targetPos.y - yMoveAmount, ((colCount - 1) * -yMoveAmount)-fixedYSumAmount);
                 shouldMoveVertically = true;
             }
@@ -175,7 +199,8 @@ public class InventoryUIController : MonoBehaviour
     {
         uiNumber = Mathf.Abs(Mathf.RoundToInt(value / xMoveAmount));
         //return itemsParent.GetChild(uiNumber + ((currentCol - 1) * rowCount)).GetComponent<InventoryUISlot>();
-        return inventory.GetSlotInIndex(uiNumber + ((currentCol - 1) * rowCount), panelComponents[currentPanelCount].type);
+        return inventory.GetSlotInIndex(Mathf.RoundToInt(uiNumber + ((currentCol - 1) * rowCount)),
+            panelComponents[currentPanelCount].type);
     }
 
     public InventoryUISlot GetCurrentSlot()
@@ -212,17 +237,19 @@ public class InventoryUIController : MonoBehaviour
             return;
         }
         canSwipeUI = false;
-        
+
+        currentSlot.DeActivate();
         canCycleInSlots = false;
         currentPanelCount++;
-        Vector3 pos = slideObject.localPosition;
         slideObject.gameObject.SetActive(false);
         inventoryUIParent.DOMoveX(inventoryUIParent.position.x - inventoryMoveAmount, tweenDuration).SetUpdate(true)
             .OnComplete(()=> { 
                 canCycleInSlots = true; 
                 canSwipeUI = true;
                 SetTransforms(currentPanelCount);
-                slideObject.localPosition = pos;
+                slideObject.localPosition = startPos;
+                targetPos = startPos;
+                ResetTraverseValues();
                 slideObject.gameObject.SetActive(true);
 
             });
@@ -235,10 +262,11 @@ public class InventoryUIController : MonoBehaviour
         {
             return;
         }
+
+        currentSlot.DeActivate();
         canSwipeUI = false;
         canCycleInSlots = false;
         currentPanelCount--;
-        Vector3 pos = slideObject.localPosition;
         slideObject.gameObject.SetActive(false);
 
         inventoryUIParent.DOMoveX(inventoryUIParent.position.x + inventoryMoveAmount, tweenDuration).SetUpdate(true)
@@ -246,9 +274,10 @@ public class InventoryUIController : MonoBehaviour
                 canCycleInSlots = true;
                 canSwipeUI = true;
                 SetTransforms(currentPanelCount);
-                slideObject.localPosition = pos;
+                slideObject.localPosition = startPos;
+                targetPos = startPos;
+                ResetTraverseValues();
                 slideObject.gameObject.SetActive(true);
-
             });
     }
 
@@ -257,6 +286,16 @@ public class InventoryUIController : MonoBehaviour
         slideObject = panelComponents[index].slideObject;
         itemsParent = panelComponents[index].itemsParent;
         usePanel = panelComponents[index].usePanel;
+        colCount = Mathf.CeilToInt(inventory.GetEverySize(panelComponents[currentPanelCount].type) / rowCount);
+        colModde = inventory.GetEverySize(panelComponents[currentPanelCount].type) % rowCount;
+    }
+
+    private void ResetTraverseValues()
+    {
+        currentRow = 1;
+        currentCol = 1;
+        currentSlot = inventory.GetSlotInIndex(0, panelComponents[currentPanelCount].type);
+        currentSlot.Set();
     }
 
     public int GetCurrentPanelNumber()

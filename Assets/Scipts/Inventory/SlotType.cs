@@ -4,5 +4,6 @@ public enum SlotType
     Armor,
     Shield,
     Bow,
-    Material
+    Material,
+    Food
 }

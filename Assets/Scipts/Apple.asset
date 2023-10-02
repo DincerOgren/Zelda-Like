@@ -16,6 +16,6 @@ MonoBehaviour:
   displayName: 444
   description: 
   icon: {fileID: 21300000, guid: 5d9ba4e7d0964044ea54abe409d81dfd, type: 3}
-  itemType: 0
+  itemType: 4
   pickup: {fileID: 7394177031912633042, guid: 184081df2869e784c97fbe782f77d07d, type: 3}
   healAmount: 10

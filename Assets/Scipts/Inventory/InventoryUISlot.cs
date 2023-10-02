@@ -65,12 +65,7 @@ public class InventoryUISlot : MonoBehaviour
 
     private void Update()
     {
-        if (curPos == Vector3.zero)
-        {
-            curPos = transform.position;
-            curPos += panelOffset;
-        }
-
+        
         if (isChosen && !isEquipped)
         {
             isEquipped = true;
@@ -80,11 +75,19 @@ public class InventoryUISlot : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E) && item!=null)
             {
+                curPos = transform.position;
+                curPos += panelOffset;
                 usePanel.gameObject.SetActive(true);
                 itemIcon.sprite=item.GetIcon();
                 usePanel.SetActive();
                 usePanel.transform.position = curPos;
                 itemIcon.gameObject.SetActive(true);
+                print("cur Pos = " + curPos);
+                print("obje pos= " + transform.position);
+                print("Use panel pos = " + usePanel.transform.position);
+
+                print("obje Local Pos=" + transform.localPosition);
+                print("use Local Pos=" + usePanel.transform.localPosition);
             }
 
         }

@@ -133,11 +133,11 @@ public class InventoryUsePanelControl : MonoBehaviour
 
         if (curItem != null)
         {
-            if (curItem.GetItemType() == ItemType.Weapon)
+            if (curItem.GetItemType() == SlotType.Weapon)
             {
                 useText.text = weaponText;
             }
-            if (curItem.GetItemType() == ItemType.Food)
+            if (curItem.GetItemType() == SlotType.Food || curItem.GetItemType() == SlotType.Material)
             {
                 useText.text = foodText;
             }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class TempInventory : MonoBehaviour
 {
@@ -130,7 +131,6 @@ public class TempInventory : MonoBehaviour
         {
             if (item.inventoryType == type)
             {
-                print("tip bulundu");
                 return item.slots[index];
             }
         }
@@ -138,47 +138,55 @@ public class TempInventory : MonoBehaviour
         return null;
     }
 
-    public bool AddItemToSlot(int slot, Item item, int number)
-    {
-        if (slots[slot].item != null)
-        {
-            return AddToFirstEmptySlot(item, number); ;
-        }
+    //public bool AddItemToSlot(int slot, Item item, int number)
+    //{
+    //    if (slots[slot].item != null)
+    //    {
+    //        return AddToFirstEmptySlot(item, number); ;
+    //    }
 
-        //var i = FindStack(item);
-        //if (i >= 0)
-        //{
-        //    slot = i;
-        //}
+    //    //var i = FindStack(item);
+    //    //if (i >= 0)
+    //    //{
+    //    //    slot = i;
+    //    //}
 
-        slots[slot].item = item;
-        if (inventoryUpdated != null)
-        {
-            inventoryUpdated();
-        }
-        return true;
-    }
+    //    slots[slot].item = item;
+    //    if (inventoryUpdated != null)
+    //    {
+    //        inventoryUpdated();
+    //    }
+    //    return true;
+    //}
 
     private int FindSlot(Item item)
     {
         //int i = FindStack(item);
         //if (i < 0)
         //{
-        int i = FindEmptySlot();
+        int i = FindEmptySlot(item.GetItemType());
         //}
         return i;
     }
 
-    private int FindEmptySlot()
+    private int FindEmptySlot(SlotType type)
     {
-        for (int i = 0; i < slots.Length; i++)
-        {
 
-            if (slots[i].item == null)
+        foreach (var item in inventories)
+        {
+            if (item.inventoryType == type)
             {
-                return i;
+                for (int i = 0; i < item.slots.Length; i++)
+                {
+
+                    if (item.slots[i].item == null)
+                    {
+                        return i;
+                    }
+                }
             }
         }
+
         return -1;
     }
 
@@ -204,7 +212,8 @@ public class TempInventory : MonoBehaviour
             }
         }
 
-        return 0;
+        print("HATA SUNDA +=" + type.ToString());
+        return -1;
         //return inventories[n].inventorySize;
     }
     public int GetSize()
@@ -212,16 +221,23 @@ public class TempInventory : MonoBehaviour
         return slots.Length;
     }
 
-    public bool AddToFirstEmptySlot(Item item, int number)
+    public bool AddToFirstEmptySlot(Item item, int number, SlotType type)
     {
-        int i = FindEmptySlot();
+        int i = FindEmptySlot(type);
 
         if (i < 0)
         {
             return false;
         }
 
-        slots[i].item = item;
+        foreach (var inventory in inventories)
+        {
+            if (inventory.inventoryType == type)
+            {
+                inventory.slots[i].item = item;
+                print("try to ad to this type= " + inventory.inventoryType.ToString());
+            }
+        }
         if (inventoryUpdated != null)
         {
             inventoryUpdated();
@@ -264,5 +280,18 @@ public class TempInventory : MonoBehaviour
         }
     }
 
+    public InventoryType GetInventoryFromType(SlotType type)
+    {
+        foreach (var item in inventories)
+        {
+            if (item.inventoryType == type)
+            {
+                return item;
+            }
+        }
 
+        print("ERROR BOS TYPE");
+        InventoryType i=new();
+        return i;
+    }
 }

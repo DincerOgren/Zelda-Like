@@ -12,7 +12,7 @@ public class Item : ScriptableObject
     [Tooltip("The UI icon to represent this item in the inventory.")]
     [SerializeField] Sprite icon = null;
     [Tooltip("The UI icon to represent this item in the inventory.")]
-    [SerializeField] ItemType itemType;
+    [SerializeField] SlotType itemType;
     [SerializeField] Pickup pickup;
 
     public Sprite GetIcon()
@@ -37,7 +37,7 @@ public class Item : ScriptableObject
         return description;
     }
 
-    public ItemType GetItemType()
+    public SlotType GetItemType()
     {
         return itemType;
     }
