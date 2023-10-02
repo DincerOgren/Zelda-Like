@@ -677,7 +677,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InventoryItemPrefab: {fileID: 1405180167875211423, guid: 29d596419855f1141b7b217f3044346c,
     type: 3}
-  usePanel: {fileID: 1446594276}
+  usePanel: {fileID: 0}
+  mainControl: {fileID: 2139963646}
+  slotType: 0
+  panelIndex: 0
 --- !u!114 &86280757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1180,6 +1183,7 @@ GameObject:
   - component: {fileID: 178184465}
   - component: {fileID: 178184464}
   - component: {fileID: 178184463}
+  - component: {fileID: 178184466}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -1269,6 +1273,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178184460}
   m_CullTransparentMesh: 1
+--- !u!114 &178184466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178184460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ccdcb11a439fc448cab2525e9a3e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InventoryItemPrefab: {fileID: 1405180167875211423, guid: 29d596419855f1141b7b217f3044346c,
+    type: 3}
+  usePanel: {fileID: 1249867896}
+  mainControl: {fileID: 2139963646}
+  slotType: 4
+  panelIndex: 2
 --- !u!1 &184938038
 GameObject:
   m_ObjectHideFlags: 0
@@ -9325,13 +9347,13 @@ MonoBehaviour:
   inventories:
   - inventoryType: 0
     slots: []
-    inverntorySize: 5
+    inventorySize: 6
   - inventoryType: 1
     slots: []
-    inverntorySize: 3
-  - inventoryType: 3
+    inventorySize: 4
+  - inventoryType: 4
     slots: []
-    inverntorySize: 8
+    inventorySize: 12
 --- !u!114 &1745565612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10727,6 +10749,8 @@ MonoBehaviour:
   panelCount: 0
   currentPanelCount: 0
   panelComponents: []
+  currentSlot: {fileID: 0}
+  uiNumber: 0
 --- !u!1 &1925705981
 GameObject:
   m_ObjectHideFlags: 0
@@ -11308,6 +11332,7 @@ GameObject:
   - component: {fileID: 2116087153}
   - component: {fileID: 2116087152}
   - component: {fileID: 2116087151}
+  - component: {fileID: 2116087154}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -11397,6 +11422,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2116087148}
   m_CullTransparentMesh: 1
+--- !u!114 &2116087154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116087148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2ccdcb11a439fc448cab2525e9a3e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InventoryItemPrefab: {fileID: 1405180167875211423, guid: 29d596419855f1141b7b217f3044346c,
+    type: 3}
+  usePanel: {fileID: 1412003774}
+  mainControl: {fileID: 2139963646}
+  slotType: 1
+  panelIndex: 1
 --- !u!1 &2118569174
 GameObject:
   m_ObjectHideFlags: 0
@@ -11691,22 +11734,24 @@ MonoBehaviour:
   colCount: 3
   inventoryUIParent: {fileID: 184938039}
   inventoryMoveAmount: 1050
-  tweenDuration: 3
+  tweenDuration: 0.5
   panelCount: 0
   currentPanelCount: 0
   panelComponents:
-  - type: 4
+  - type: 0
     slideObject: {fileID: 1447708674}
     itemsParent: {fileID: 86280755}
     usePanel: {fileID: 1446594276}
-  - type: 0
+  - type: 1
     slideObject: {fileID: 1716410572}
     itemsParent: {fileID: 2116087149}
     usePanel: {fileID: 1412003774}
-  - type: 2
+  - type: 4
     slideObject: {fileID: 243200542}
     itemsParent: {fileID: 178184461}
     usePanel: {fileID: 1249867896}
+  currentSlot: {fileID: 0}
+  uiNumber: 0
 --- !u!114 &2139963647
 MonoBehaviour:
   m_ObjectHideFlags: 0

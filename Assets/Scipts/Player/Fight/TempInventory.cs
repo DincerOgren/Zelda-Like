@@ -23,7 +23,7 @@ public class TempInventory : MonoBehaviour
     {
         public SlotType inventoryType;
         public InventoryUISlot[] slots;
-        public int inverntorySize;
+        public int inventorySize;
     }
     [Header("Multiple Inventory Try")]
     public InventoryType[] inventories;
@@ -36,7 +36,7 @@ public class TempInventory : MonoBehaviour
         slots = new InventoryUISlot[inventorySize];
         for (int i = 0; i < inventories.Length; i++)
         {
-            inventories[i].slots = new InventoryUISlot[inventories[i].inverntorySize];
+            inventories[i].slots = new InventoryUISlot[inventories[i].inventorySize];
         }
 
     }
@@ -81,12 +81,12 @@ public class TempInventory : MonoBehaviour
         }
         else if (uiCheck.CheckIsReadyToClose() && !isInventoryOpen)
         {
-            
-                weaponUI.gameObject.SetActive(false);
-                Time.timeScale = 1.0f;
-            
+
+            weaponUI.gameObject.SetActive(false);
+            Time.timeScale = 1.0f;
+
         }
-        
+
 
     }
 
@@ -111,10 +111,10 @@ public class TempInventory : MonoBehaviour
             inventoryUpdated();
         }
     }
-   
+
     public void UseFood(FoodItem item)
     {
-        print("Heal Amount = "+item.healAmount);
+        print("Heal Amount = " + item.healAmount);
     }
     public bool GetInventoryStatus()
     {
@@ -124,9 +124,18 @@ public class TempInventory : MonoBehaviour
 
 
     //_-------------------------------------------------------------deneme fonks
-    public InventoryUISlot GetSlotInIndex(int index)
+    public InventoryUISlot GetSlotInIndex(int index,SlotType type)
     {
-        return slots[index];
+        foreach (var item in inventories) 
+        {
+            if (item.inventoryType == type)
+            {
+                print("tip bulundu");
+                return item.slots[index];
+            }
+        }
+
+        return null;
     }
 
     public bool AddItemToSlot(int slot, Item item, int number)
@@ -155,7 +164,7 @@ public class TempInventory : MonoBehaviour
         //int i = FindStack(item);
         //if (i < 0)
         //{
-          int  i = FindEmptySlot();
+        int i = FindEmptySlot();
         //}
         return i;
     }
@@ -184,6 +193,20 @@ public class TempInventory : MonoBehaviour
         return FindSlot(item) >= 0;
     }
 
+    public int GetEverySize(SlotType type)
+    {
+
+        foreach (var slot in inventories)
+        {
+            if (slot.inventoryType == type)
+            {
+                return slot.inventorySize;
+            }
+        }
+
+        return 0;
+        //return inventories[n].inventorySize;
+    }
     public int GetSize()
     {
         return slots.Length;
@@ -218,20 +241,28 @@ public class TempInventory : MonoBehaviour
         return false;
     }
 
-    public Item GetItemInSlot(int slot)
+    public Item GetItemInSlot(int slot,SlotType type)
     {
-        return slots[slot].GetItem();
+        foreach (var item in inventories)
+        {
+            if (item.inventoryType == type)
+            {
+                return item.slots[slot].item;
+            }
+        }
+
+        return null;
     }
     public void RemoveFromSlot(int slot, int number)
     {
-         
+
         slots[slot].item = null;
-        
+
         if (inventoryUpdated != null)
         {
             inventoryUpdated();
         }
     }
 
-    
+
 }

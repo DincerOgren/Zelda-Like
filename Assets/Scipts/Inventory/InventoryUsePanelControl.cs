@@ -55,6 +55,7 @@ public class InventoryUsePanelControl : MonoBehaviour
             {
                 isItemSelected = true;
                 curPos = chooseObject.localPosition;
+
                 targetPos = curPos;
                 canSelect = true;
             }

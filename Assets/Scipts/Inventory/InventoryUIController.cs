@@ -56,9 +56,9 @@ public class InventoryUIController : MonoBehaviour
     private static readonly float fixedYSumAmount = -165f;
 
     private Vector3 curPos;
-    private int uiNumber;
-
-    private InventoryUISlot currentSlot = null;
+    [Header("dnenm")]
+    public InventoryUISlot currentSlot = null;
+    public int uiNumber;
     private int currentCol = 1;
 
     private TempInventory inventory;
@@ -101,7 +101,7 @@ public class InventoryUIController : MonoBehaviour
 
         if (isActiveAndEnabled && !firstOpen)
         {
-            currentSlot = inventory.GetSlotInIndex(0);
+            currentSlot = inventory.GetSlotInIndex(0, panelComponents[0].type);
             currentSlot.Set();
             targetPos = slideObject.localPosition;
             firstOpen = true;
@@ -175,7 +175,7 @@ public class InventoryUIController : MonoBehaviour
     {
         uiNumber = Mathf.Abs(Mathf.RoundToInt(value / xMoveAmount));
         //return itemsParent.GetChild(uiNumber + ((currentCol - 1) * rowCount)).GetComponent<InventoryUISlot>();
-        return inventory.GetSlotInIndex(uiNumber + ((currentCol - 1) * rowCount));
+        return inventory.GetSlotInIndex(uiNumber + ((currentCol - 1) * rowCount), panelComponents[currentPanelCount].type);
     }
 
     public InventoryUISlot GetCurrentSlot()
@@ -257,6 +257,11 @@ public class InventoryUIController : MonoBehaviour
         slideObject = panelComponents[index].slideObject;
         itemsParent = panelComponents[index].itemsParent;
         usePanel = panelComponents[index].usePanel;
+    }
+
+    public int GetCurrentPanelNumber()
+    {
+        return currentPanelCount;
     }
 }
 

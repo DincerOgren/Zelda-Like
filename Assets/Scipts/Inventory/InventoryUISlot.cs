@@ -21,23 +21,29 @@ public class InventoryUISlot : MonoBehaviour
 
 
 
-    public void Setup(TempInventory inventory, int index, InventoryUsePanelControl usePanel)
+    public void Setup(TempInventory inventory, int index, InventoryUsePanelControl usePanel,SlotType type)
     {
         this.inventory=inventory;
         this.index=index;
         this.usePanel=usePanel;
-        if (inventory.GetSlotInIndex(index) == null)
+        if (inventory.GetSlotInIndex(index,type) == null)
         {
-            inventory.slots[index] = this;
+            foreach (var inventorie in inventory.inventories)
+            {
+                if (inventorie.inventoryType == type)
+                {
+                    inventorie.slots[index]=this;
+                }
+            }
 
         }
         else
         {
-            item = inventory.GetItemInSlot(index);
+            item = inventory.GetItemInSlot(index,type);
         }
 
 
-        if (inventory.GetItemInSlot(index) != null)
+        if (inventory.GetItemInSlot(index,type) != null)
         {
             itemIcon.sprite = item.GetIcon();
             itemIcon.gameObject.SetActive(true);

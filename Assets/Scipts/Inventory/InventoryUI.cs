@@ -8,7 +8,9 @@ public class InventoryUI : MonoBehaviour
 {
     [SerializeField] InventoryUISlot InventoryItemPrefab = null;
     [SerializeField] InventoryUsePanelControl usePanel = null;
-
+    [SerializeField] InventoryUIController mainControl;
+    [SerializeField] SlotType slotType;
+    [SerializeField] int panelIndex;
     TempInventory playerInventory;
    
 
@@ -21,6 +23,9 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
+        slotType = mainControl.panelComponents[panelIndex].type;
+        usePanel = mainControl.panelComponents[panelIndex].usePanel;
+
         Spawn();
             
         Redraw();
@@ -28,7 +33,7 @@ public class InventoryUI : MonoBehaviour
 
     private void Spawn()
     {
-        for (int i = 0; i < playerInventory.GetSize(); i++)
+        for (int i = 0; i < playerInventory.GetEverySize(slotType); i++)
         {
             Instantiate(InventoryItemPrefab,transform);
         }
@@ -42,10 +47,10 @@ public class InventoryUI : MonoBehaviour
         }
 
 
-        for (int i = 0; i < playerInventory.GetSize(); i++)
+        for (int i = 0; i < playerInventory.GetEverySize(slotType); i++)
         {
             var itemUI=transform.GetChild(i).GetComponent<InventoryUISlot>();
-            itemUI.Setup(playerInventory, i,usePanel);
+            itemUI.Setup(playerInventory, i,usePanel,slotType);
             itemUI.gameObject.SetActive(true);
             //var itemUI = Instantiate(InventoryItemPrefab, transform);
         }
