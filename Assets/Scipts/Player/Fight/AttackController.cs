@@ -58,6 +58,11 @@ public class AttackController : MonoBehaviour
         }
 
     }
+    public static AttackController GetPlayerAttackController()
+    {
+        var player = GameObject.FindWithTag("Player");
+        return player.GetComponent<AttackController>();
+    }
 
 }
 

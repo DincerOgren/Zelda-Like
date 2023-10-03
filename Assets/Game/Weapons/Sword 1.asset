@@ -17,14 +17,14 @@ MonoBehaviour:
   description: 
   icon: {fileID: 21300000, guid: 5fd50594014b70e48bd6993443d46b32, type: 3}
   itemType: 0
-  pickup: {fileID: 9019309367737201965, guid: e183673fdef6ede449a590122dedd2be, type: 3}
+  pickup: {fileID: 1995968922935378037, guid: 5dde34d950d99fa4a8aceedbd9a7407b, type: 3}
   weaponType: 0
   weaponDamage: 0
   weaponHealth: 0
   timeBetweenAttacks: 0
   comboToAttack2Time: 0.3
   comboToAttack3Time: 0.3
-  equippedPrefab: {fileID: 5996314362135716279, guid: cc651299911530a43bb0dd4464f83888,
+  equippedPrefab: {fileID: 7406951906112686819, guid: 1dbbbfa779f9f694ebd9f813c8df115b,
     type: 3}
   hasProjectile: 0
   projectilePrefab: {fileID: 0}

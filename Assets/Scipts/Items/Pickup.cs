@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 /// <summary>
 /// To be placed at the root of a Pickup prefab. Contains the data about the
@@ -49,6 +50,7 @@ public class Pickup : MonoBehaviour
         if (foundSlot)
         {
             print("Added to slot " + item.GetItemType());
+
             Destroy(gameObject);
         }
     }

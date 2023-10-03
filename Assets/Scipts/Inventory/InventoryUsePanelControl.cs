@@ -93,7 +93,7 @@ public class InventoryUsePanelControl : MonoBehaviour
                             gameObject.SetActive(false);
                             break;
                         case 1:
-                            inventory.DropItem(currentSlot.GetIndex());
+                            inventory.DropItem(currentSlot.GetIndex(), currentSlot.GetSlotType()); ;
                             if (dropEvent!=null)
                             {
                                 dropEvent();

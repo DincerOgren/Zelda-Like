@@ -19,29 +19,30 @@ public class WeaponUIController : MonoBehaviour
 
     private float itemCount;
 
-    private Vector3 curPos;
+    private Vector3 curPos=Vector3.zero;
     private int uiNumber;
 
-    private MeleeCombatUI chosenItem;
+    private WeaponItemUI chosenItem;
 
     
     private TempInventory inventory;
+
+    public WeaponItemUI[] weaponList;
     private void Awake()
     {
         inventory = TempInventory.GetPlayerInventory();
+        weaponList = new WeaponItemUI[12];
     }
     private void Start()
     {
         itemParent = slideObject.GetChild(0);
-        itemCount = itemParent.childCount - 1;
         chosenItem = ChooseObject(curPos.x);
         chosenItem.Set();
 
     }
     private void Update()
     {
-
-
+        itemCount = itemParent.childCount - 1;
 
         if (!ui.gameObject.activeSelf)
             return;
@@ -85,7 +86,7 @@ public class WeaponUIController : MonoBehaviour
             {
                 //print("anim" + uiNumber + right);
                 //anim.SetTrigger(uiNumber + right);
-                chosenItem.Drop();
+                chosenItem.DeActivate();
                 targetPos = slideObject.localPosition;
                 targetPos.x = Mathf.Max(targetPos.x - moveAmount, itemCount * -moveAmount);
                 shouldMoveLeftt = true;
@@ -96,7 +97,7 @@ public class WeaponUIController : MonoBehaviour
                 //    print("anim" + uiNumber + left);
 
                 //    anim.SetTrigger(uiNumber + left);
-                chosenItem.Drop();
+                chosenItem.DeActivate();
                 shouldMoveRight = true;
                 targetPos = slideObject.localPosition;
                 targetPos.x = MathF.Min(targetPos.x + moveAmount, 0);
@@ -108,11 +109,11 @@ public class WeaponUIController : MonoBehaviour
 
     }
 
-    private MeleeCombatUI ChooseObject(float value)
+    private WeaponItemUI ChooseObject(float value)
     {
         uiNumber = Mathf.Abs(Mathf.RoundToInt(value / moveAmount));
-        return itemParent.GetChild(uiNumber).GetComponent<MeleeCombatUI>();
-        //return inventory.GetItemInSlot(uiNumber,SlotType.Weapon);
+        return itemParent.GetChild(uiNumber).GetComponent<WeaponItemUI>();
+        //return inventory.GetItemInSlot(uiNumber,SlotType.Weapon).;
     }
 
     public bool CheckIsReadyToClose()

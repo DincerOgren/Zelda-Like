@@ -69,11 +69,18 @@ public class InventoryUIController : MonoBehaviour
 
     private bool firstOpen = false;
     private bool canCycleInSlots = true;
+    private void Awake()
+    {
+        inventory = TempInventory.GetPlayerInventory();
+        panelCount = inventoryUIParent.childCount - 1;
+        for (int i = 0; i < inventory.inventories.Length; i++)
+        {
+            panelComponents[i].type = inventory.inventories[i].inventoryType;
+        }
+    }
     private void Start()
     {
         
-        inventory = TempInventory.GetPlayerInventory();
-        panelCount = inventoryUIParent.childCount-1;
         //itemCount = itemsParent.childCount;
         //itemList = new InventoryUISlot[Mathf.RoundToInt(itemCount)];
         //FillList(itemList);

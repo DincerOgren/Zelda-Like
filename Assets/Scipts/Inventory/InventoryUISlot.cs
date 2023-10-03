@@ -16,6 +16,7 @@ public class InventoryUISlot : MonoBehaviour
 
 
     private TempInventory inventory;
+    private SlotType inventoryType;
     private int index;
     private Vector3 curPos=Vector3.zero;
 
@@ -26,11 +27,12 @@ public class InventoryUISlot : MonoBehaviour
         this.inventory=inventory;
         this.index=index;
         this.usePanel=usePanel;
-        if (inventory.GetSlotInIndex(index,type) == null)
+        this.inventoryType = type;
+        if (inventory.GetSlotInIndex(index,inventoryType) == null)
         {
             foreach (var inventorie in inventory.inventories)
             {
-                if (inventorie.inventoryType == type)
+                if (inventorie.inventoryType == inventoryType)
                 {
                     inventorie.slots[index]=this;
                 }
@@ -39,11 +41,11 @@ public class InventoryUISlot : MonoBehaviour
         }
         else
         {
-            item = inventory.GetItemInSlot(index,type);
+            item = inventory.GetItemInSlot(index,inventoryType);
         }
 
 
-        if (inventory.GetItemInSlot(index,type) != null)
+        if (inventory.GetItemInSlot(index,inventoryType) != null)
         {
             itemIcon.sprite = item.GetIcon();
             itemIcon.gameObject.SetActive(true);
@@ -82,12 +84,6 @@ public class InventoryUISlot : MonoBehaviour
                 usePanel.SetActive();
                 usePanel.transform.position = curPos;
                 itemIcon.gameObject.SetActive(true);
-                print("cur Pos = " + curPos);
-                print("obje pos= " + transform.position);
-                print("Use panel pos = " + usePanel.transform.position);
-
-                print("obje Local Pos=" + transform.localPosition);
-                print("use Local Pos=" + usePanel.transform.localPosition);
             }
 
         }
@@ -118,7 +114,13 @@ public class InventoryUISlot : MonoBehaviour
         //{
         //    print("item null != ifi");
         //}
+
         return item;
+    }
+
+    public SlotType GetSlotType()
+    {
+        return inventoryType;
     }
     public int GetIndex()
     {

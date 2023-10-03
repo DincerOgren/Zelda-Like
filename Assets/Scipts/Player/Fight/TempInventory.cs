@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,8 +15,6 @@ public class TempInventory : MonoBehaviour
 
     [Header("Inventory Size")]
 
-    public int inventorySize = 8;
-    public InventoryUISlot[] slots;
     private AttackController attackController;
 
 
@@ -31,10 +30,15 @@ public class TempInventory : MonoBehaviour
     private InventoryType currentInventory;
 
     public event Action inventoryUpdated;
+    public event Action updateWeapons;
 
+
+    private bool shouldOpen = false;
+
+    [Header("For Dropping Items")]
+    public Transform dropPoint;
     private void Awake()
     {
-        slots = new InventoryUISlot[inventorySize];
         for (int i = 0; i < inventories.Length; i++)
         {
             inventories[i].slots = new InventoryUISlot[inventories[i].inventorySize];
@@ -48,6 +52,7 @@ public class TempInventory : MonoBehaviour
         {
             inventoryCanvas.gameObject.SetActive(false);
         }
+        weaponUI.gameObject.SetActive(false);
     }
     private void Update()
     {
@@ -73,18 +78,28 @@ public class TempInventory : MonoBehaviour
                 Time.timeScale = 1.0f;
             }
         }
-        else if (Input.GetKey(KeyCode.Mouse2))
+        else if (Input.GetKeyDown(KeyCode.Mouse2))
         {
+            shouldOpen = !shouldOpen;
+            weaponUI.gameObject.SetActive(shouldOpen);
+            //Time.timeScale = 0.0f;
 
-            weaponUI.gameObject.SetActive(true);
-            Time.timeScale = 0.0f;
+            if (shouldOpen)
+            {
+                Time.timeScale = 0.0f;
+            }
+            else
+            {
+
+                Time.timeScale = 1.0f;
+            }
 
         }
         else if (uiCheck.CheckIsReadyToClose() && !isInventoryOpen)
         {
 
-            weaponUI.gameObject.SetActive(false);
-            Time.timeScale = 1.0f;
+           // weaponUI.gameObject.SetActive(false);
+            //Time.timeScale = 1.0f;
 
         }
 
@@ -103,10 +118,16 @@ public class TempInventory : MonoBehaviour
         }
     }
 
-    public void DropItem(int index)
+    public void DropItem(int index,SlotType type)
     {
+        var selectedInventory=GetInventoryFromType(type);
+        var item = selectedInventory.slots[index].item;
+        selectedInventory.slots[index].item = null;
 
-        slots[index].item = null;
+        var pikcup=item.SpawnPickup(dropPoint.position, 1);
+        pikcup.GetComponent<Rigidbody>().isKinematic = false;
+        pikcup.GetComponent<Rigidbody>().useGravity = true;
+        //Instantiate(item, dropPoint.position, Quaternion.identity);
         if (inventoryUpdated != null)
         {
             inventoryUpdated();
@@ -168,7 +189,22 @@ public class TempInventory : MonoBehaviour
         //}
         return i;
     }
+    public int GetFilledAmount(SlotType type)
+    {
+        var inventorie = GetInventoryFromType(type);
+        int amount = 0;
+        for (int i = 0; i < inventorie.inventorySize; i++)
+        {
+            if (inventorie.slots[i].item == null)
+            {
+                continue;
+            }
+            else
+                amount++;
+        }
 
+        return amount;
+    }
     private int FindEmptySlot(SlotType type)
     {
 
@@ -216,10 +252,12 @@ public class TempInventory : MonoBehaviour
         return -1;
         //return inventories[n].inventorySize;
     }
-    public int GetSize()
-    {
-        return slots.Length;
-    }
+
+    
+    //public int GetSize()
+    //{
+    //    return slots.Length;
+    //}
 
     public bool AddToFirstEmptySlot(Item item, int number, SlotType type)
     {
@@ -245,17 +283,17 @@ public class TempInventory : MonoBehaviour
         return true;
     }
 
-    public bool HasItem(Item item)
-    {
-        for (int i = 0; i < slots.Length; i++)
-        {
-            if (object.ReferenceEquals(slots[i].item, item))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool HasItem(Item item)
+    //{
+    //    for (int i = 0; i < slots.Length; i++)
+    //    {
+    //        if (object.ReferenceEquals(slots[i].item, item))
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
 
     public Item GetItemInSlot(int slot,SlotType type)
     {
@@ -269,16 +307,16 @@ public class TempInventory : MonoBehaviour
 
         return null;
     }
-    public void RemoveFromSlot(int slot, int number)
-    {
+    //public void RemoveFromSlot(int slot, int number)
+    //{
 
-        slots[slot].item = null;
+    //    slots[slot].item = null;
 
-        if (inventoryUpdated != null)
-        {
-            inventoryUpdated();
-        }
-    }
+    //    if (inventoryUpdated != null)
+    //    {
+    //        inventoryUpdated();
+    //    }
+    //}
 
     public InventoryType GetInventoryFromType(SlotType type)
     {

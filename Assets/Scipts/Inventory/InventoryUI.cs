@@ -18,7 +18,6 @@ public class InventoryUI : MonoBehaviour
     {
         playerInventory = TempInventory.GetPlayerInventory();
         playerInventory.inventoryUpdated += Redraw;
-        
     }
 
     private void Start()

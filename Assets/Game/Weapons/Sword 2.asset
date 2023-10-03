@@ -15,7 +15,9 @@ MonoBehaviour:
   itemID: 
   displayName: sword2
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 172774604c1bee84185a69041576525b, type: 3}
+  itemType: 0
+  pickup: {fileID: 1995968922935378037, guid: 612b8279895b6674e994e9ec3e196373, type: 3}
   weaponType: 0
   weaponDamage: 0
   weaponHealth: 0

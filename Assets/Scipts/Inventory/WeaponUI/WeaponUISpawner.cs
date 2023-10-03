@@ -4,48 +4,67 @@ using UnityEngine;
 
 public class WeaponUISpawner : MonoBehaviour
 {
-    [SerializeField] MeleeCombatUI prefab;
+    public WeaponUIController weaponUIController;
+    [SerializeField] WeaponItemUI prefab;
+    [SerializeField] WeaponItemUI defaultPrefab;
     TempInventory inventory;
-
-
-    private int inventorySize;
+    AttackController attackController;
+    private int inventoryFillAmount;
     private void Awake()
     {
         inventory = TempInventory.GetPlayerInventory();
+        attackController = AttackController.GetPlayerAttackController();
+        inventory.inventoryUpdated += ReCompile;
     }
     void Start()
     {
-        
+        SpawnDefault();
     }
 
     void Update()
     {
-        
-    }
-
-    private void Spawn()
-    {
-        inventorySize= inventory.GetInventoryFromType(SlotType.Weapon).inventorySize;
-
-        for (int i = 0; i < inventorySize; i++)
+        if (Input.GetKeyDown(KeyCode.L))
         {
-            Instantiate(prefab, transform);
+            ReCompile();
         }
     }
 
+    private void SpawnDefault()
+    {
+        var a = Instantiate(defaultPrefab, transform);
+        a.SetupDefault(inventory, attackController,weaponUIController);
+    }
     private void ReCompile()
     {
+        inventoryFillAmount = inventory.GetFilledAmount(SlotType.Weapon); ;
+        print(inventoryFillAmount + " fill amount");
+        var weaponInventory = inventory.GetInventoryFromType(SlotType.Weapon);
+        
         foreach (Transform child in transform)
         {
-            child.gameObject.SetActive(false);
+            Destroy(child.gameObject);
         }
 
-
-        for (int i = 0; i < inventorySize; i++)
+        SpawnDefault();
+        int j = 0;
+        for (int i = 0; i < weaponInventory.inventorySize; i++)
         {
-            var itemUI = transform.GetChild(i).GetComponent<MeleeCombatUI>();
-            
-            //var itemUI = Instantiate(InventoryItemPrefab, transform);
+            if (j == inventoryFillAmount)
+            {
+                break;
+            }
+
+            if (weaponInventory.slots[i].item == null)
+            {
+                continue;
+            }
+            else
+            {
+                var itemUI = Instantiate(prefab, transform);
+                itemUI.Setup(inventory, attackController,weaponUIController, j+1,i);
+                j++;
+            }
         }
+
     }
 }
