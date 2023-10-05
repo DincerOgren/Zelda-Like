@@ -57,7 +57,6 @@ public class PlayerMovement : MonoBehaviour
         CheckInput();
         SetRotation();
         CheckMovement();
-
         CheckStamina();
         UpdateAnims();
     }

@@ -9,6 +9,8 @@ public class PlayerCameraFollow : MonoBehaviour
     private Transform player;
     float mouseX;
     float mouseY;
+
+    #region CurrentWorking
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -27,7 +29,10 @@ public class PlayerCameraFollow : MonoBehaviour
         //Vector3 destination = Vector3.Lerp(transform.position, sum, followSpeed * Time.deltaTime);
         //transform.position = destination;
 
-        transform.eulerAngles += new Vector3(mouseY, mouseX,0);
+        transform.eulerAngles += new Vector3(mouseY, mouseX, 0);
         transform.position = Vector3.Lerp(transform.position, player.position, followSpeed);
     }
+    #endregion
+
+
 }
