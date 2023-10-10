@@ -49,6 +49,24 @@
                     "processors": "Invert,Clamp(min=-0.1,max=0.1)",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "DashButton",
+                    "type": "Button",
+                    "id": "9952a8cb-a6f6-44dc-84f3-c72a6f2b7bd3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Crouch Button",
+                    "type": "Button",
+                    "id": "2d926d4b-66fc-47de-8ed1-1edaae5094ef",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -148,6 +166,76 @@
                     "processors": "",
                     "groups": "",
                     "action": "Camra Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3367fe2f-237c-4909-aa7a-612a712c3ac5",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DashButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "55a8d663-ce3a-4f90-a59c-3d59eec0165c",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Crouch Button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "InventoryUIKeys",
+            "id": "b7f34942-1f20-4903-a0a4-13249520f309",
+            "actions": [
+                {
+                    "name": "Tab Inventory",
+                    "type": "Button",
+                    "id": "4f246631-3fb1-4f8b-a3d0-bd562270149c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Weapon UI",
+                    "type": "Button",
+                    "id": "88328bb3-f6dc-4c2f-88f7-2a46e2c12f22",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8265db64-4a68-418a-a878-45975e6ac815",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tab Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3edc9681-8215-4026-ae55-95926cf39052",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Weapon UI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -71,6 +71,24 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
                     ""processors"": ""Invert,Clamp(min=-0.1,max=0.1)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""DashButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""9952a8cb-a6f6-44dc-84f3-c72a6f2b7bd3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Crouch Button"",
+                    ""type"": ""Button"",
+                    ""id"": ""2d926d4b-66fc-47de-8ed1-1edaae5094ef"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +190,76 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
                     ""action"": ""Camra Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3367fe2f-237c-4909-aa7a-612a712c3ac5"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DashButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""55a8d663-ce3a-4f90-a59c-3d59eec0165c"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""InventoryUIKeys"",
+            ""id"": ""b7f34942-1f20-4903-a0a4-13249520f309"",
+            ""actions"": [
+                {
+                    ""name"": ""Tab Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""4f246631-3fb1-4f8b-a3d0-bd562270149c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Weapon UI"",
+                    ""type"": ""Button"",
+                    ""id"": ""88328bb3-f6dc-4c2f-88f7-2a46e2c12f22"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""8265db64-4a68-418a-a878-45975e6ac815"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tab Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3edc9681-8215-4026-ae55-95926cf39052"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Weapon UI"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -185,6 +273,12 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
         m_CharacterMovement_RunButton = m_CharacterMovement.FindAction("Run Button", throwIfNotFound: true);
         m_CharacterMovement_MouseLook = m_CharacterMovement.FindAction("Mouse Look", throwIfNotFound: true);
         m_CharacterMovement_CamraZoom = m_CharacterMovement.FindAction("Camra Zoom", throwIfNotFound: true);
+        m_CharacterMovement_DashButton = m_CharacterMovement.FindAction("DashButton", throwIfNotFound: true);
+        m_CharacterMovement_CrouchButton = m_CharacterMovement.FindAction("Crouch Button", throwIfNotFound: true);
+        // InventoryUIKeys
+        m_InventoryUIKeys = asset.FindActionMap("InventoryUIKeys", throwIfNotFound: true);
+        m_InventoryUIKeys_TabInventory = m_InventoryUIKeys.FindAction("Tab Inventory", throwIfNotFound: true);
+        m_InventoryUIKeys_WeaponUI = m_InventoryUIKeys.FindAction("Weapon UI", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -251,6 +345,8 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
     private readonly InputAction m_CharacterMovement_RunButton;
     private readonly InputAction m_CharacterMovement_MouseLook;
     private readonly InputAction m_CharacterMovement_CamraZoom;
+    private readonly InputAction m_CharacterMovement_DashButton;
+    private readonly InputAction m_CharacterMovement_CrouchButton;
     public struct CharacterMovementActions
     {
         private @PlayerInputTesting m_Wrapper;
@@ -260,6 +356,8 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
         public InputAction @RunButton => m_Wrapper.m_CharacterMovement_RunButton;
         public InputAction @MouseLook => m_Wrapper.m_CharacterMovement_MouseLook;
         public InputAction @CamraZoom => m_Wrapper.m_CharacterMovement_CamraZoom;
+        public InputAction @DashButton => m_Wrapper.m_CharacterMovement_DashButton;
+        public InputAction @CrouchButton => m_Wrapper.m_CharacterMovement_CrouchButton;
         public InputActionMap Get() { return m_Wrapper.m_CharacterMovement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -284,6 +382,12 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
             @CamraZoom.started += instance.OnCamraZoom;
             @CamraZoom.performed += instance.OnCamraZoom;
             @CamraZoom.canceled += instance.OnCamraZoom;
+            @DashButton.started += instance.OnDashButton;
+            @DashButton.performed += instance.OnDashButton;
+            @DashButton.canceled += instance.OnDashButton;
+            @CrouchButton.started += instance.OnCrouchButton;
+            @CrouchButton.performed += instance.OnCrouchButton;
+            @CrouchButton.canceled += instance.OnCrouchButton;
         }
 
         private void UnregisterCallbacks(ICharacterMovementActions instance)
@@ -303,6 +407,12 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
             @CamraZoom.started -= instance.OnCamraZoom;
             @CamraZoom.performed -= instance.OnCamraZoom;
             @CamraZoom.canceled -= instance.OnCamraZoom;
+            @DashButton.started -= instance.OnDashButton;
+            @DashButton.performed -= instance.OnDashButton;
+            @DashButton.canceled -= instance.OnDashButton;
+            @CrouchButton.started -= instance.OnCrouchButton;
+            @CrouchButton.performed -= instance.OnCrouchButton;
+            @CrouchButton.canceled -= instance.OnCrouchButton;
         }
 
         public void RemoveCallbacks(ICharacterMovementActions instance)
@@ -320,6 +430,60 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
         }
     }
     public CharacterMovementActions @CharacterMovement => new CharacterMovementActions(this);
+
+    // InventoryUIKeys
+    private readonly InputActionMap m_InventoryUIKeys;
+    private List<IInventoryUIKeysActions> m_InventoryUIKeysActionsCallbackInterfaces = new List<IInventoryUIKeysActions>();
+    private readonly InputAction m_InventoryUIKeys_TabInventory;
+    private readonly InputAction m_InventoryUIKeys_WeaponUI;
+    public struct InventoryUIKeysActions
+    {
+        private @PlayerInputTesting m_Wrapper;
+        public InventoryUIKeysActions(@PlayerInputTesting wrapper) { m_Wrapper = wrapper; }
+        public InputAction @TabInventory => m_Wrapper.m_InventoryUIKeys_TabInventory;
+        public InputAction @WeaponUI => m_Wrapper.m_InventoryUIKeys_WeaponUI;
+        public InputActionMap Get() { return m_Wrapper.m_InventoryUIKeys; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InventoryUIKeysActions set) { return set.Get(); }
+        public void AddCallbacks(IInventoryUIKeysActions instance)
+        {
+            if (instance == null || m_Wrapper.m_InventoryUIKeysActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_InventoryUIKeysActionsCallbackInterfaces.Add(instance);
+            @TabInventory.started += instance.OnTabInventory;
+            @TabInventory.performed += instance.OnTabInventory;
+            @TabInventory.canceled += instance.OnTabInventory;
+            @WeaponUI.started += instance.OnWeaponUI;
+            @WeaponUI.performed += instance.OnWeaponUI;
+            @WeaponUI.canceled += instance.OnWeaponUI;
+        }
+
+        private void UnregisterCallbacks(IInventoryUIKeysActions instance)
+        {
+            @TabInventory.started -= instance.OnTabInventory;
+            @TabInventory.performed -= instance.OnTabInventory;
+            @TabInventory.canceled -= instance.OnTabInventory;
+            @WeaponUI.started -= instance.OnWeaponUI;
+            @WeaponUI.performed -= instance.OnWeaponUI;
+            @WeaponUI.canceled -= instance.OnWeaponUI;
+        }
+
+        public void RemoveCallbacks(IInventoryUIKeysActions instance)
+        {
+            if (m_Wrapper.m_InventoryUIKeysActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IInventoryUIKeysActions instance)
+        {
+            foreach (var item in m_Wrapper.m_InventoryUIKeysActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_InventoryUIKeysActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public InventoryUIKeysActions @InventoryUIKeys => new InventoryUIKeysActions(this);
     public interface ICharacterMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -327,5 +491,12 @@ public partial class @PlayerInputTesting: IInputActionCollection2, IDisposable
         void OnRunButton(InputAction.CallbackContext context);
         void OnMouseLook(InputAction.CallbackContext context);
         void OnCamraZoom(InputAction.CallbackContext context);
+        void OnDashButton(InputAction.CallbackContext context);
+        void OnCrouchButton(InputAction.CallbackContext context);
+    }
+    public interface IInventoryUIKeysActions
+    {
+        void OnTabInventory(InputAction.CallbackContext context);
+        void OnWeaponUI(InputAction.CallbackContext context);
     }
 }

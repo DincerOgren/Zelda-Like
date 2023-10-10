@@ -11,38 +11,69 @@ public class TestDynamicMovement : MonoBehaviour
     public Transform referencedPoint;
 
 
-    
-    public float run;
-    
+    //INPUT READ VALUES
+    public float run,
+        dash;
+
 
     [Header("Movement Variables")]
     public float baseSpeed = 5f;
-    public float speedMultiplier = 1f;
-    public float stepModifier = .05f;
-    public float speedChangeModifier = 0.4f;
     public float walkSpeedMultiplierValue = 0.4f;
+    public float crouchWalkSpeedMultiplierValue = .4f;
+    public float tiredWalkSpeedMultiplierValue = .4f;
+
+    public float speedChangeModifier = 0.4f;
+    public float stepModifier = .05f;
     public float speedChanger;
     private float valueX = 0,
         valueY = 0;
-    private bool isRunning;
+
+    public float currentSpeedMultiplier = 1f;
+
+
+    private bool isDashing,
+        isRunning,
+        isMoving,
+        canDash;
+
+
+    //ForStamina 
+
+    private bool isTired;
+
+    //For Crouch
+    private bool isCrouching;
+
+    [Header("Dash")]
+
+    public float dashSpeedMultiplierValue = 3f;
+    [Range(0f,5f)] public float dashCooldownTime = 2f;
+
+    
+
+    [Header("Timers")]
+
+    private float currentDashTime = Mathf.Infinity;
+
 
     [Header("Slopes")]
     public AnimationCurve slopeSpeedAngles;
     public float slopeSpeedModifier;
-
-
+    public float slopeOffset;
+    public float lerp;
+    public float valueForDowningCharacter = 0;
     [Header("For Rotating Player")]
 
     private Vector3 currentTargetRotation;
     private Vector3 timeToReachTargetRotation;
     private Vector3 dampedTargetRotationCurrentVelocity;
-    private Vector3 dampedTargetRotationPassedTime   ;
+    private Vector3 dampedTargetRotationPassedTime;
 
 
     //[Range(0.0f, 0.3f)]
     //public float RotationSmoothTime = 0.12f;
     //private float _rotationVelocity;
-    [field:Header("Collisions")]
+    [field: Header("Collisions")]
     [field: SerializeField] public FlyingCapsuleCollider ColliderUtility { get; private set; }
     private SlopeData slopeData;
 
@@ -50,7 +81,7 @@ public class TestDynamicMovement : MonoBehaviour
     [Header("Layer Data")]
     [SerializeField] LayerMask groundLayer;
     public Vector2 movementHolder,
-        movement, mouseMove;
+        movementInputs, mouseMove;
 
 
     //-------COMPONENTS---------
@@ -60,12 +91,15 @@ public class TestDynamicMovement : MonoBehaviour
     Animator anim;
     Collider characterCollider;
     Transform cam;
+    Stamina st;
+    #region Monobehaviour Methods
     private void Awake()
     {
-        inputs=new PlayerInputTesting();
+        inputs = new PlayerInputTesting();
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         characterCollider = GetComponent<Collider>();
+        st = GetComponent<Stamina>();
         cam = Camera.main.transform;
         ColliderUtility.Initilaze(gameObject);
         ColliderUtility.CalculateCapsuleValues();
@@ -75,12 +109,12 @@ public class TestDynamicMovement : MonoBehaviour
     {
         speedChanger = baseSpeed;
         timeToReachTargetRotation.y = 0.14f;
-        inputs.CharacterMovement.Move.started += OnMovementStart;
-        inputs.CharacterMovement.Move.canceled += OnMovementCancel;
+        InputEventMethod();
 
     }
 
-   
+
+
     private void OnValidate()
     {
         ColliderUtility.Initilaze(gameObject);
@@ -94,10 +128,27 @@ public class TestDynamicMovement : MonoBehaviour
     {
         inputs.Disable();
     }
+
+
+
+
     private void Update()
     {
-        anim.SetFloat("speed",GetCurrentSpeed());
         HandleInputs();
+        CheckDash();
+        CheckRun();
+        UpdateTimers();
+        CheckStamina();
+        CheckStaminaValues();
+        SetAnimVariables();
+    }
+
+    private void SetAnimVariables()
+    {
+        anim.SetBool("isMoving", isMoving);
+        anim.SetBool("isCrouching", isCrouching);
+        anim.SetBool("isTired", isTired);
+        anim.SetFloat("speed", GetCurrentSpeed());
     }
 
     private void FixedUpdate()
@@ -107,37 +158,105 @@ public class TestDynamicMovement : MonoBehaviour
 
     }
 
+
+
+    #endregion
     #region Inputs
+
+    private void InputEventMethod()
+    {
+
+        inputs.CharacterMovement.Move.started += OnMovementStart;
+        inputs.CharacterMovement.Move.canceled += OnMovementCancel;
+
+        inputs.CharacterMovement.DashButton.started += OnDashStart;
+        inputs.CharacterMovement.DashButton.canceled += OnDashCancel;
+
+        inputs.CharacterMovement.CrouchButton.started += OnCrouchStart;
+
+    }
+
+  
+
+    public void DisableActionFor(InputAction action, float amountOfSeconds)
+    {
+        StartCoroutine(DisableAction(action, amountOfSeconds));
+    }
+    IEnumerator DisableAction(InputAction action, float seconds)
+    {
+        action.Disable();
+
+        yield return new WaitForSecondsRealtime(seconds);
+
+        action.Enable();
+    }
     private void HandleInputs()
     {
         movementHolder = inputs.CharacterMovement.Move.ReadValue<Vector2>();
 
         run = inputs.CharacterMovement.RunButton.ReadValue<float>();
         isRunning = run == 1;
+        dash = inputs.CharacterMovement.DashButton.ReadValue<float>();
+        movementInputs.x = GetAxsisMovement(movementHolder.x, ref valueX);
+        movementInputs.y = GetAxsisMovement(movementHolder.y, ref valueY);
 
-        movement.x = GetAxsisMovement(movementHolder.x, ref valueX);
-        movement.y = GetAxsisMovement(movementHolder.y, ref valueY);
-        
     }
 
+    private void CheckDash()
+    {
+        canDash = currentDashTime > dashCooldownTime;
+    }
+
+    private void CheckRun()
+    {
+        if (isDashing && isTired && !isRunning) { return; }
+        isCrouching = false;
+        st.DecreaseStamina(st.GetDAmount());
+        currentSpeedMultiplier = isRunning ? 1 : walkSpeedMultiplierValue;
+    }
+    private void UpdateTimers()
+    {
+        currentDashTime += Time.deltaTime;
+    }
     private void OnMovementStart(InputAction.CallbackContext context)
     {
+        if (isDashing && isTired) return;
 
-        speedMultiplier = walkSpeedMultiplierValue;
+        currentSpeedMultiplier = isCrouching ? crouchWalkSpeedMultiplierValue : walkSpeedMultiplierValue;
     }
 
     private void OnMovementCancel(InputAction.CallbackContext context)
     {
+        if (isDashing) return;
         print("Cagirildi");
         ResetVelocity();
         valueX = 0;
         valueY = 0;
-        speedMultiplier = 0;
-
+        currentSpeedMultiplier = 0;
     }
-  
+    private void OnDashStart(InputAction.CallbackContext context)
+    {
+        if (!canDash) return;
+        currentDashTime = 0;
+        isDashing = true;
+        currentSpeedMultiplier = dashSpeedMultiplierValue;
+        anim.SetTrigger("Dash");
+        DashForce();
+    }
 
-    private float GetAxsisMovement(float a,ref float value)
+    private void DashForce()
+    {
+        rb.velocity = (GetSpeedValue() * transform.forward);
+    }
+
+    private void OnDashCancel(InputAction.CallbackContext context)
+    {
+    }
+    private void OnCrouchStart(InputAction.CallbackContext context)
+    {
+        isCrouching = !isCrouching;
+    }
+    private float GetAxsisMovement(float a, ref float value)
     {
         value = Mathf.MoveTowards(value, a, stepModifier);
         return value;
@@ -160,11 +279,48 @@ public class TestDynamicMovement : MonoBehaviour
         //    value = Mathf.MoveTowards(value, a, tModifier);
         //}
     }
+
+    #endregion
+    #region Stamina Methods
+    private void CheckStamina()
+    {
+        if (st.GetStamina() <= 0.1f)
+        {
+            isTired = true;
+        }
+
+        if (st.IsStaminaFull())
+        {
+            isTired = false;
+        }
+
+    }
+
+    private void CheckStaminaValues()
+    {
+
+        isMoving = GetCurrentSpeed() >= 0.2f;
+
+        if (isTired)
+        {
+           currentSpeedMultiplier = tiredWalkSpeedMultiplierValue;
+           st.TiredStaminaIncrease(st.GetTiredIncAmount());
+
+        }
+        else if (!isRunning)
+        {
+            st.IncreaseStamina(st.GetIncAmount());
+        }
+        else
+        {
+            st.IncreaseStamina(st.GetIncAmount());
+        }
+    }
     #endregion
 
     private void Move()
     {
-        if (movement == Vector2.zero || speedMultiplier == 0) 
+        if (movementInputs == Vector2.zero || currentSpeedMultiplier == 0 || isDashing)
         {
             return;
         }
@@ -178,9 +334,10 @@ public class TestDynamicMovement : MonoBehaviour
         //var dir = Rotate(moveDir); 
         var curVelocity = GetPlayerGroundVelocity();
 
-        speedChanger = Mathf.MoveTowards(speedChanger, GetSpeedValue(), speedChangeModifier);
-
-        rb.AddForce(speedChanger * targetRot-curVelocity, ForceMode.VelocityChange);
+        // FOR TRANSITION BETWEEN WALK AND RUN SPEED
+        speedChanger = isDashing ? GetSpeedValue() : speedChanger > baseSpeed ? GetSpeedValue() : Mathf.MoveTowards(speedChanger, GetSpeedValue(), speedChangeModifier);
+        //speedChanger = GetSpeedValue();
+        rb.AddForce(speedChanger * targetRot - curVelocity, ForceMode.VelocityChange);
     }
 
     #region Rotation
@@ -273,23 +430,44 @@ public class TestDynamicMovement : MonoBehaviour
             float angle = Vector3.Angle(hit.normal, -capsuleCenterToDownRay.direction);
 
             float slopeSpeedModif = SetSlopeSpeedModifierOnAngle(angle);
-
-            if (slopeSpeedModif==0)
+            
+            if (slopeSpeedModif == 0)
             {
                 return;
             }
 
-            float distanceToFloatPoint = ColliderUtility.ColliderData.ColliderCenterInLocalSpace.y - hit.distance;
+            var angleFor = Vector3.Angle(transform.forward, -hit.normal);
+            if (slopeSpeedModif < 1 && angleFor > 90f)
+            {
+                print("Asagi");
+                //Asagi iniyor rampadan
+                valueForDowningCharacter = -slopeOffset;
+            }
+            else if (slopeSpeedModif < 1 && angleFor < 89f)
+            {
+                print("Yukari");
+                valueForDowningCharacter = slopeOffset;
+            }
+            else
+            {
+                valueForDowningCharacter = 0;
+            }
 
+            float distanceToFloatPoint = ColliderUtility.ColliderData.ColliderCenterInLocalSpace.y - 
+                hit.distance + valueForDowningCharacter;
             if (distanceToFloatPoint == 0)
             {
+            print(" Distance 0 oldu");
                 return;
 
             }
-            float amountToLift = distanceToFloatPoint * slopeData.StepReachForce - GetPlayerVerticalVelocity().y;
-
+            
+            
+            
+            float amountToLift;
+            amountToLift = distanceToFloatPoint * slopeData.StepReachForce - GetPlayerVerticalVelocity().y ;
+            
             Vector3 liftForce = new(0, amountToLift, 0);
-
             rb.AddForce(liftForce, ForceMode.VelocityChange);
         }
     }
@@ -305,7 +483,7 @@ public class TestDynamicMovement : MonoBehaviour
     #region Getter Metods
     private Vector3 GetPlayerGroundVelocity()
     {
-        Vector3 vel=rb.velocity;
+        Vector3 vel = rb.velocity;
         vel.y = 0;
         return vel;
     }
@@ -315,12 +493,11 @@ public class TestDynamicMovement : MonoBehaviour
     }
     private Vector3 GetMovementDirection()
     {
-        return new Vector3(movement.x, 0, movement.y);
+        return new Vector3(movementInputs.x, 0, movementInputs.y);
     }
     private float GetSpeedValue()
     {
-        speedMultiplier = isRunning ? 1 : walkSpeedMultiplierValue;
-        return baseSpeed * speedMultiplier * slopeSpeedModifier;
+        return baseSpeed * currentSpeedMultiplier * slopeSpeedModifier;
     }
     private float GetCurrentSpeed()
     {
@@ -332,6 +509,40 @@ public class TestDynamicMovement : MonoBehaviour
     private void ResetVelocity()
     {
         rb.velocity = Vector3.zero;
+    }
+    #endregion
+
+    #region Animation Methods
+
+    public void OnAnimationEnterEvent()
+    {
+
+    }
+
+    public void OnAnimationTransitionEvent()
+    {
+
+    }
+    public void OnAnimationExitEvent()
+    {
+        isDashing = false;
+        if (movementInputs == Vector2.zero)
+        {
+            ResetVelocity();
+            currentSpeedMultiplier = 0;
+            return;
+        }
+        else if (run == 1)
+        {
+            ResetVelocity();
+            currentSpeedMultiplier = 1;
+        }
+        else
+        {
+            ResetVelocity(); 
+            currentSpeedMultiplier = walkSpeedMultiplierValue;
+        }
+
     }
     #endregion
 }

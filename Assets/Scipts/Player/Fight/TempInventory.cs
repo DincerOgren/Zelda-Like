@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using UnityEngine.Windows;
 
 public class TempInventory : MonoBehaviour
 {
@@ -32,8 +34,13 @@ public class TempInventory : MonoBehaviour
     public event Action inventoryUpdated;
     public event Action updateWeapons;
 
+    PlayerInputTesting playerInputs;
 
     private bool shouldOpen = false;
+
+
+    [Header("New Input System Values")]
+    private bool tabKey, middleMouseButton;
 
     [Header("For Dropping Items")]
     public Transform dropPoint;
@@ -43,16 +50,24 @@ public class TempInventory : MonoBehaviour
         {
             inventories[i].slots = new InventoryUISlot[inventories[i].inventorySize];
         }
+        playerInputs = new PlayerInputTesting();
 
+    }
+    private void OnEnable()
+    {
+        playerInputs.InventoryUIKeys.Enable();
+    }
+    private void OnDisable()
+    {
+        playerInputs.InventoryUIKeys.Disable();
     }
     private void Start()
     {
         attackController = GameObject.FindWithTag("Player").GetComponent<AttackController>();
         if (!isInventoryOpen)
         {
-            inventoryCanvas.gameObject.SetActive(false);
         }
-        weaponUI.gameObject.SetActive(false);
+        SetInputEvents();
     }
     private void Update()
     {
@@ -63,34 +78,37 @@ public class TempInventory : MonoBehaviour
         //        print("Slot num: " + i + " Slot item: " + slots[i].GetItem().name);
         //    }
         //}
-
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (tabKey)
         {
+            tabKey = false;
             isInventoryOpen = !isInventoryOpen;
             inventoryCanvas.gameObject.SetActive(isInventoryOpen);
             if (isInventoryOpen)
             {
                 Time.timeScale = 0.0f;
+                playerInputs.CharacterMovement.Disable();
             }
             else
             {
-
+                playerInputs.CharacterMovement.Enable();
                 Time.timeScale = 1.0f;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.Mouse2))
+        else if (middleMouseButton)
         {
+            middleMouseButton = false;
             shouldOpen = !shouldOpen;
             weaponUI.gameObject.SetActive(shouldOpen);
             //Time.timeScale = 0.0f;
 
             if (shouldOpen)
             {
+                playerInputs.CharacterMovement.Disable();
                 Time.timeScale = 0.0f;
             }
             else
             {
-
+                playerInputs.CharacterMovement.Enable();
                 Time.timeScale = 1.0f;
             }
 
@@ -104,6 +122,22 @@ public class TempInventory : MonoBehaviour
         }
 
 
+    }
+
+    private void SetInputEvents()
+    {
+        playerInputs.InventoryUIKeys.TabInventory.started += TabPressed;
+        playerInputs.InventoryUIKeys.WeaponUI.started += MousePressed;
+    }
+
+    private void TabPressed(InputAction.CallbackContext context)
+    {
+        tabKey = !tabKey;
+    }
+
+    private void MousePressed(InputAction.CallbackContext context)
+    {
+        middleMouseButton = !middleMouseButton;
     }
 
     public void UseItem(Item item)

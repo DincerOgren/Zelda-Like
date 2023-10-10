@@ -13,7 +13,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] int panelIndex;
     TempInventory playerInventory;
    
-
+    private bool isFinished1,isFinished2;
     private void Awake()
     {
         playerInventory = TempInventory.GetPlayerInventory();
@@ -36,6 +36,7 @@ public class InventoryUI : MonoBehaviour
         {
             Instantiate(InventoryItemPrefab,transform);
         }
+        isFinished1 = true;
     }
 
     private void Redraw()
@@ -53,7 +54,11 @@ public class InventoryUI : MonoBehaviour
             itemUI.gameObject.SetActive(true);
             //var itemUI = Instantiate(InventoryItemPrefab, transform);
         }
+        isFinished2 = true;
     }
 
-    
+    public bool FinishedLoading()
+    {
+        return (isFinished1 && isFinished2);
+    }
 }

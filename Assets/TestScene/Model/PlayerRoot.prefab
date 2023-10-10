@@ -66,9 +66,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   referencedPoint: {fileID: 8717424760524308128}
+  run: 0
+  dash: 0
   baseSpeed: 1
-  speedMultiplier: 1
-  runSpeed: 8
+  stepModifier: 0.05
+  speedChangeModifier: 0.4
+  walkSpeedMultiplierValue: 0.4
+  speedChanger: 0
+  currentSpeedMultiplier: 1
+  dashSpeedMultiplierValue: 3
+  dashCooldownTime: 2
+  slopeSpeedAngles:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  slopeSpeedModifier: 0
+  <ColliderUtility>k__BackingField:
+    <DefaultColliderData>k__BackingField:
+      <Height>k__BackingField: 1.8
+      <CenterY>k__BackingField: 0.9
+      <Radius>k__BackingField: 0.2
+    <SlopeData>k__BackingField:
+      <StepHeightPercentage>k__BackingField: 0.25
+      <RayDistance>k__BackingField: 2
+      <StepReachForce>k__BackingField: 25
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  movementHolder: {x: 0, y: 0}
+  movementInputs: {x: 0, y: 0}
+  mouseMove: {x: 0, y: 0}
 --- !u!136 &8717424758405213676
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -79,10 +108,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.25
-  m_Height: 1.8
+  m_Radius: 0.2
+  m_Height: 1.3499999
   m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_Center: {x: 0, y: 1.125, z: 0}
 --- !u!95 &8717424758405213673
 Animator:
   serializedVersion: 5
